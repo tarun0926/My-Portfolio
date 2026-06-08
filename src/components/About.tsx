@@ -93,7 +93,7 @@ export default function About() {
               {/* Profile Graphic */}
               <div className="relative flex flex-col items-center text-center">
                 <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-cyan-400/50 shadow-xl mb-4 group-hover:scale-105 transition-all duration-300 group-hover:border-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.15)] group-hover:shadow-[0_0_25px_rgba(0,229,255,0.3)]">
-                  <img src="/profile.jpg" alt="Tarun Kotiya" className="w-full h-full object-cover" />
+                  <img src="./profile.jpg" alt="Tarun Kotiya" className="w-full h-full object-cover" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-1 font-space">Tarun Kotiya</h3>
                 <p className="text-xs text-cyan-400 font-semibold tracking-wider uppercase mb-3 font-space">Java & Web Developer</p>

@@ -80,7 +80,7 @@ const cardVariants: Variants = {
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative py-28 px-6 md:px-12 bg-[#0B1120] overflow-hidden">
+    <section id="skills" className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Background radial highlight */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-950/5 rounded-full blur-[120px] pointer-events-none z-[1]" />
 

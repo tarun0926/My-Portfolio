@@ -52,7 +52,7 @@ export default function Achievements() {
   };
 
   return (
-    <section className="relative py-28 px-6 md:px-12 bg-[#0B1120] overflow-hidden">
+    <section className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Background glow highlights */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-950/5 rounded-full blur-[120px] pointer-events-none" />
 

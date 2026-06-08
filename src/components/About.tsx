@@ -49,7 +49,7 @@ const cardVariants: Variants = {
 
 export default function About() {
   return (
-    <section id="about" className="relative py-28 px-6 md:px-12 bg-[#0B1120]/85 overflow-hidden">
+    <section id="about" className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Decorative Glow Elements */}
       <div className="absolute top-1/4 left-0 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none z-[2]" />
       <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-sky-500/5 rounded-full blur-[100px] pointer-events-none z-[2]" />

@@ -115,7 +115,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-28 px-6 md:px-12 bg-[#0B1120] overflow-hidden">
+    <section id="contact" className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Decorative Blur Spheres */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-sky-500/5 rounded-full blur-[120px] pointer-events-none" />

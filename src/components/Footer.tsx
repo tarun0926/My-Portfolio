@@ -9,7 +9,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[#0B1120] py-12 px-6 md:px-12 border-t border-cyan-500/10">
+    <footer className="relative bg-transparent py-12 px-6 md:px-12 border-t border-cyan-500/10">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Left Side: Branding */}
         <div className="flex flex-col items-center md:items-start gap-1">

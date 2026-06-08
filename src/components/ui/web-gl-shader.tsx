@@ -46,28 +46,38 @@ export function WebGLShader() {
         return fract(p.x * p.y);
       }
 
-      // Draw a grid of twinkling stars without dynamic branching
-      float drawStars(vec2 uv, float threshold, float twinkleSpeed, float starSize) {
+      // Draw a grid of twinkling realistic stars
+      vec3 drawStars(vec2 uv, float threshold, float twinkleSpeed, float maxOpacity) {
         vec2 id = floor(uv);
         vec2 gv = fract(uv) - 0.5;
         
         float n = hash(id); // random value between 0 and 1
         
-        // Twinkle effect (sine wave based on time and individual offset)
-        float twinkle = sin(time * twinkleSpeed + n * 6.28) * 0.4 + 0.6;
+        // Only draw if above threshold
+        float starMask = step(threshold, n);
         
         // Random offset inside the grid cell
         vec2 offset = vec2(fract(n * 15.3), fract(n * 94.7)) - 0.5;
         float d = length(gv - offset * 0.7);
         
-        // Smooth star point with falloff
-        float intensity = (starSize / d) * twinkle;
+        // Twinkle effect (sine wave based on time and individual offset)
+        float twinkle = sin(time * twinkleSpeed + n * 62.8) * 0.45 + 0.55;
         
-        // Only keep stars above the threshold
-        intensity *= step(threshold, n);
+        // Realistic star shape: sharp core + soft glow corona
+        float core = smoothstep(0.06, 0.0, d);
+        float glow = exp(-d * 18.0) * 0.35;
+        float intensity = (core + glow) * twinkle * maxOpacity * starMask;
         
-        // Apply a cut-off to prevent infinite brightness at center
-        return smoothstep(0.0, 1.2, intensity);
+        // Multi-color star temperatures (light blue, light orange, and bright white)
+        float colorSelect = fract(n * 43.1);
+        vec3 blueStar = vec3(0.65, 0.85, 1.0);
+        vec3 orangeStar = vec3(1.0, 0.82, 0.62);
+        vec3 whiteStar = vec3(1.0, 1.0, 1.0);
+        
+        vec3 starColor = mix(whiteStar, blueStar, step(0.5, colorSelect));
+        starColor = mix(starColor, orangeStar, step(0.82, colorSelect));
+        
+        return starColor * intensity;
       }
 
       // Slow nebula flow
@@ -89,38 +99,34 @@ export function WebGLShader() {
       void main() {
         vec2 uv = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
         
-        // Slow time factor for stars and nebula
-        float t = time * 0.15;
+        // Extra slow-motion factor (movement speed is extremely gentle)
+        float t = time * 0.04; 
         
         // 1. NEBULA LAYER (Deep cosmic background)
-        float flowVal = nebulaFlow(uv * 0.8, t * 0.3);
-        vec3 darkSpace = vec3(0.03, 0.05, 0.1); // Dark space base
-        vec3 nebulaCyan = vec3(0.0, 0.15, 0.22); // Deep cyan gas
-        vec3 nebulaPurple = vec3(0.06, 0.02, 0.12); // Deep purple gas
+        float flowVal = nebulaFlow(uv * 0.8, t * 0.2);
+        vec3 darkSpace = vec3(0.043, 0.067, 0.125); // #0B1120 matching portfolio base
+        vec3 nebulaCyan = vec3(0.01, 0.13, 0.19); // Subtle cyan gas
+        vec3 nebulaPurple = vec3(0.06, 0.03, 0.11); // Subtle purple gas
         
-        vec3 background = mix(darkSpace, nebulaPurple, flowVal * 0.6);
-        background = mix(background, nebulaCyan, pow(flowVal, 2.0) * 0.4);
+        vec3 background = mix(darkSpace, nebulaPurple, flowVal * 0.55);
+        background = mix(background, nebulaCyan, pow(flowVal, 2.0) * 0.35);
         
         // 2. STARS LAYERS (Parallax movement in slow motion)
-        float starsIntensity = 0.0;
+        vec3 starsColor = vec3(0.0);
         
-        // Layer A: Tiny, far away, slow drift
-        vec2 uvA = uv * 12.0 + vec2(t * 0.03, t * 0.02);
-        starsIntensity += drawStars(uvA, 0.96, 2.5, 0.003) * 0.45;
+        // Layer A: High-density tiny, distant stars, very slow drift
+        vec2 uvA = uv * 32.0 + vec2(t * 0.08, t * 0.05);
+        starsColor += drawStars(uvA, 0.85, 1.6, 0.35);
         
-        // Layer B: Medium stars, moderate drift
-        vec2 uvB = uv * 7.0 + vec2(t * -0.02, t * 0.04);
-        starsIntensity += drawStars(uvB, 0.97, 1.8, 0.006) * 0.7;
+        // Layer B: Medium density stars, slow drift
+        vec2 uvB = uv * 18.0 + vec2(t * -0.05, t * 0.1);
+        starsColor += drawStars(uvB, 0.92, 1.1, 0.6);
         
-        // Layer C: Brighter, closer stars, slightly faster
-        vec2 uvC = uv * 3.5 + vec2(t * 0.05, t * -0.03);
-        starsIntensity += drawStars(uvC, 0.99, 1.2, 0.012) * 1.0;
+        // Layer C: Bright foreground stars
+        vec2 uvC = uv * 8.0 + vec2(t * 0.12, t * -0.07);
+        starsColor += drawStars(uvC, 0.96, 0.7, 0.9);
         
-        // Color the stars (mix white, cyan, and slight warm blue)
-        vec3 starsColor = vec3(0.9, 0.95, 1.0) * starsIntensity;
-        starsColor += vec3(0.0, 0.4, 0.8) * pow(starsIntensity, 1.5) * 0.3;
-        
-        // Combine background and stars
+        // Combine background and colored stars
         vec3 finalColor = background + starsColor;
         
         // Apply vignette for premium layout

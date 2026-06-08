@@ -14,7 +14,7 @@ import { WebGLShader } from "./components/ui/web-gl-shader";
 
 function App() {
   return (
-    <div className="relative w-full min-h-screen bg-[#0B1120] text-slate-100 overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-300">
+    <div className="relative w-full min-h-screen bg-transparent text-slate-100 overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-300">
       {/* Background WebGL Shader */}
       <WebGLShader />
 

@@ -34,7 +34,7 @@ const timelineData = [
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative py-28 px-6 md:px-12 bg-[#0B1120]/90 overflow-hidden">
+    <section id="experience" className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Decorative Glow */}
       <div className="absolute top-1/2 left-0 w-80 h-80 bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none" />
 

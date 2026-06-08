@@ -49,7 +49,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="relative w-full overflow-hidden bg-[#0B1120]">
+    <section id="hero" className="relative w-full overflow-hidden bg-transparent">
       <LampContainer className="min-h-screen">
         <div className="flex flex-col items-center justify-center pt-0 sm:pt-36 md:pt-44 lg:pt-48 w-full">
           {/* Intro Tag */}

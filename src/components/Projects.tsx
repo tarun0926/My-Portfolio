@@ -64,7 +64,7 @@ export default function Projects() {
   });
 
   return (
-    <section id="projects" className="relative py-28 px-6 md:px-12 bg-[#0B1120]/85 overflow-hidden">
+    <section id="projects" className="relative py-28 px-6 md:px-12 bg-transparent overflow-hidden">
       {/* Background neon lights */}
       <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-sky-500/5 rounded-full blur-[120px] pointer-events-none" />

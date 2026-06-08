@@ -6,7 +6,7 @@ export default function SkillsMarquee() {
   const allSkillsRow2 = allSkills.filter((_, idx) => idx % 2 !== 0);
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#0B1120] py-6 border-t border-b border-cyan-500/5">
+    <div className="relative w-full overflow-hidden bg-transparent py-6 border-t border-b border-cyan-500/5">
       {/* Edge Gradients */}
       <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0B1120] to-transparent z-20 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0B1120] to-transparent z-20 pointer-events-none" />

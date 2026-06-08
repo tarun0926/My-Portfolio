@@ -39,51 +39,97 @@ export function WebGLShader() {
       uniform vec2 resolution;
       uniform float time;
 
-      float col(vec2 p, float t) {
+      // Hash function for noise
+      float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+      }
+
+      // Draw a grid of twinkling stars without dynamic branching
+      float drawStars(vec2 uv, float threshold, float twinkleSpeed, float starSize) {
+        vec2 id = floor(uv);
+        vec2 gv = fract(uv) - 0.5;
+        
+        float n = hash(id); // random value between 0 and 1
+        
+        // Twinkle effect (sine wave based on time and individual offset)
+        float twinkle = sin(time * twinkleSpeed + n * 6.28) * 0.4 + 0.6;
+        
+        // Random offset inside the grid cell
+        vec2 offset = vec2(fract(n * 15.3), fract(n * 94.7)) - 0.5;
+        float d = length(gv - offset * 0.7);
+        
+        // Smooth star point with falloff
+        float intensity = (starSize / d) * twinkle;
+        
+        // Only keep stars above the threshold
+        intensity *= step(threshold, n);
+        
+        // Apply a cut-off to prevent infinite brightness at center
+        return smoothstep(0.0, 1.2, intensity);
+      }
+
+      // Slow nebula flow
+      float nebulaFlow(vec2 p, float t) {
         float val = 0.0;
         float strength = 1.0;
         float accum = 0.0;
         
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
           p.x += sin(p.y + t) * strength;
           p.y += cos(p.x + t) * strength;
           accum += strength;
           val += sin(p.x + p.y) * strength;
-          strength *= 0.65;
+          strength *= 0.6;
         }
-        
         return abs(val / accum);
       }
 
       void main() {
-        vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
         
-        // Scale coordinate density for premium water ripple sizing
-        p *= 1.5;
+        // Slow time factor for stars and nebula
+        float t = time * 0.15;
         
-        float t = time * 0.4;
-        float cc = col(p, t);
+        // 1. NEBULA LAYER (Deep cosmic background)
+        float flowVal = nebulaFlow(uv * 0.8, t * 0.3);
+        vec3 darkSpace = vec3(0.03, 0.05, 0.1); // Dark space base
+        vec3 nebulaCyan = vec3(0.0, 0.15, 0.22); // Deep cyan gas
+        vec3 nebulaPurple = vec3(0.06, 0.02, 0.12); // Deep purple gas
         
-        // Secondary offset layer to add depth and natural flow
-        float cc2 = col(p * 1.3 + vec2(10.0), t * 0.8);
-        float wave = (cc * 0.6 + cc2 * 0.4);
+        vec3 background = mix(darkSpace, nebulaPurple, flowVal * 0.6);
+        background = mix(background, nebulaCyan, pow(flowVal, 2.0) * 0.4);
         
-        // Futuristic color palette matches
-        vec3 darkNavy = vec3(0.043, 0.067, 0.125); // #0B1120 base
-        vec3 electricCyan = vec3(0.0, 0.9, 1.0);   // #00E5FF
-        vec3 softBlue = vec3(0.22, 0.74, 0.97);    // #38BDF8
+        // 2. STARS LAYERS (Parallax movement in slow motion)
+        float starsIntensity = 0.0;
         
-        // Blend colors
-        vec3 color = mix(darkNavy, softBlue, wave * 0.3);
-        color = mix(color, electricCyan, pow(wave, 2.5) * 0.55);
+        // Layer A: Tiny, far away, slow drift
+        vec2 uvA = uv * 12.0 + vec2(t * 0.03, t * 0.02);
+        starsIntensity += drawStars(uvA, 0.96, 2.5, 0.003) * 0.45;
         
-        // Apply vignette to prevent sharp borders at the screen edges
-        vec2 uv = gl_FragCoord.xy / resolution;
-        float vignette = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+        // Layer B: Medium stars, moderate drift
+        vec2 uvB = uv * 7.0 + vec2(t * -0.02, t * 0.04);
+        starsIntensity += drawStars(uvB, 0.97, 1.8, 0.006) * 0.7;
+        
+        // Layer C: Brighter, closer stars, slightly faster
+        vec2 uvC = uv * 3.5 + vec2(t * 0.05, t * -0.03);
+        starsIntensity += drawStars(uvC, 0.99, 1.2, 0.012) * 1.0;
+        
+        // Color the stars (mix white, cyan, and slight warm blue)
+        vec3 starsColor = vec3(0.9, 0.95, 1.0) * starsIntensity;
+        starsColor += vec3(0.0, 0.4, 0.8) * pow(starsIntensity, 1.5) * 0.3;
+        
+        // Combine background and stars
+        vec3 finalColor = background + starsColor;
+        
+        // Apply vignette for premium layout
+        vec2 screenUv = gl_FragCoord.xy / resolution;
+        float vignette = screenUv.x * screenUv.y * (1.0 - screenUv.x) * (1.0 - screenUv.y);
         vignette = clamp(pow(16.0 * vignette, 0.25), 0.0, 1.0);
-        color *= vignette;
+        finalColor *= vignette;
         
-        gl_FragColor = vec4(color, 0.85);
+        gl_FragColor = vec4(finalColor, 1.0);
       }
     `
 
